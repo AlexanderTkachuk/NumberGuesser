@@ -20,28 +20,44 @@ maxNum.textContent = max;
 guessBtn.addEventListener('click', (e)=>{
     let guess = parseInt(guessInput.value);
 
-    if(isNaN(guess) || guess < min || guess > max) {
+    if(isNaN(guess) || guess < min || guess > max || (guessInput.value = '')) {
         setMessage(`Please enter a number between ${min} and ${max}`, 'red');
     }
 
     //Check if won
     if(guess === winningNum) {
-        //Gissable input
-        guessInput.disabled = true;
-        //chenge border color
-        guessInput.style.borderColor = 'green';
-        //set message
-        setMessage(`${winningNum} is correct! YOU WIN!`, 'green')
+        //game over - won
+        gameOver(true, `${winningNum} is correct, YOU WIN!`);
     } else {
-
+        //wrong number
+        guessesLeft -= 1;
+        if(guessesLeft === 0) {
+            //game over - lost
+           gameOver(false,`Game over, you lost. The correct number was ${winningNum}`);
+        } else {
+            //game continues - answer wrong
+            guessInput.style.borderColor = 'red';
+            //clear input
+            guessInput.value = '';
+            //tell user its wrong number
+            setMessage(`${guess} is not correct, ${guessesLeft} guesses left`, 'red');
+        }
     }
+});
 
-    // if(!(isNaN(guess)) && guess> min && guess < max) {
-    //     message.textContent ='';
-    // }
-})
+//game over 
+function gameOver(won, msg) {
+    let color;
+    won === true ? color = 'green' : color = 'red';
+    guessInput.disabled = true;
+    //chenge border color
+    guessInput.style.borderColor = color;
+    message.style.color = color;
+    //set message
+    setMessage(msg)
+};
 
 function setMessage(msg, color) {
     message.textContent = msg;
     message.style.color = color;
-}
+};
